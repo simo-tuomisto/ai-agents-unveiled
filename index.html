@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AI agents unveiled</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      img {max-width: 100%;}
+      .image-80 img { width: 80%;}
+      .image-70 img { width: 70%;}
+      .image-60 img { width: 60%;}          
+      .image-50 img { width: 50%;}
+      .image-30 img { width: 30%;}                        
+      .code-frame { width: 100%;}
+      ul {                    
+        line-height: 1.5em;
+        float: left;                                                                                                                         
+      }
+      ol {                    
+        line-height: 1.5em;
+        float: left;                                                                                                                         
+      }
+      .caption{
+          font-size: 50%
+      }                                  
+      .footnote {
+        position: absolute;                                                                                                                  
+        bottom: 3em;                                                                                                                         
+        font-size: 50%;                                                                                                                      
+        float: left;                                                                                                                         
+      } 
+      .code-frame { width: 100%;}
+      /* Two-column layout */
+      .left-column {
+        width: 50%;
+        height: 92%;
+        float: left;
+      }
+      .right-column {
+        width: 50%;
+        height: 92%;
+        float: right;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# AI agents unveiled
+
+## How AI agents work behind the scenes
+
+27.10.2026
+
+Simo Tuomisto
+
+Aalto Scientific Computing
+
+---
+
+# Topics covered
+
+- We'll look at common misconceptions that people have when it comes to AI agents
+
+- We'll look at how to construct your agentic workflows
+
+---
+
+.center[.middle[
+# Misconceptions
+]]
+
+---
+
+# Misconception 1
+
+- Agent == LLM model
+
+---
+
+# Agent != Model
+
+- Agent is a program that uses a LLM to decide what commands to run
+
+--
+
+.left-column[.middle[.center[![Diagram showing normal program control flow with if-statement](program-normal.png)]]]
+--
+
+.right-column[.middle[.center[![Diagram showing agentic program control flow with llm deciding what to run](program-agentic.png)]]]
+--
+
+- In typical program `Do x` and `Do y` are usually pre-determined things that the program does
+- With LLM programs `Tool call` can be anything from reading/writing files to running arbitrary code
+
+
+---
+
+
+# Agent != Model
+
+.left-column[
+- The main program that asks the LLM what do and executes those commands is called the **harness**
+]
+
+--
+
+.right-column[.middle[.center[.image-50[![Diagram showing a human-shaped being with LLM in its head and harness in its body](harness-llm.png)]]]]
+--
+
+.left-column[
+- Common harnesses include: Codex, Claude Code, Gemini CLI, Copilot, Opencode, pi, oh-my-pi, Cline, goose, ...
+]
+
+---
+
+# Model thinking and command running take turns
+
+.right-column[.middle[.center[![Diagram showing agentic program control flow with llm deciding what to run](program-agentic.png)]]]
+
+.left-column[
+1. Harness sends **context** to the LLM
+2. LLM can then respond with a **tool call**
+3. Harness sends output of the tool call to the LLM
+4. Continue until LLM says that it has finished
+]
+
+
+---
+
+# Misconception 2
+
+- Agents do not run on my computer
+
+---
+
+# Agents can run locally 
+
+- Agents and their tool calls run where the harness runs
+--
+
+- Sometimes this is the cloud (e.g. Microsoft Azure Foundry, OpenAI ChatGPT)
+--
+
+- If you're running Codex on your own machine tool calls are run on your computer
+
+---
+
+# Agents == you
+
+- If the harness runs on your machine, it will run commands as you
+- It is up to the harness to decide what files it reads / edits
+--
+
+- Some harnesses run code execution in sandboxes
+
+---
+
+# Misconception 3
+
+- Agents run completely locally
+
+---
+
+# Agents always need an LLM
+
+.left-column[
+- If you're using an **LLM endpoint** or **LLM provider** you're always sending data to that endpoint
+
+- Harness decides what **context** is sent to the LLM
+]
+
+.right-column[.middle[.center[.image-50[![Diagram showing a human-shaped being with LLM in its head and harness in its body](harness-llm.png)]]]]
+--
+
+.left-column[
+- You need to know what you're sending over and what the endpoint does with that data
+]
+
+---
+
+# Misconception 4
+
+- LLMs are simply predicting the next word (or **token**)
+
+--
+
+.middle[.center[![Model after single addition](./model.png)]]
+
+
+---
+
+# LLMs take their inputs in a complex form
+
+- Each LLM model has a specific and complex input format that they follow
+- Example: Qwen 3.8
+
+<iframe width="100%" height="350px" src="https://huggingface.co/Qwen/Qwen3.8-27B/raw/main/chat_template.jinja"></iframe>
+
+---
+
+# Harness manages the context
+
+- A filled input format is called the **scaffolding**
+--
+
+- Harness/chat interface fills this behind the scenes
+
+---
+
+# Scaffolding determines how the model tackles the problem
+
+.left-column[
+- What is included in the scaffolding:
+  - **System prompt**: Instructions on how the model should behave
+  - **Tools**: What tools the harness provides
+  - **Audio / videos / images / text**: Relevant context for the model
+  - **User instructions**: What the user wants to do
+]
+
+.right-column[.middle[.center[.image-80[![Diagram showing a human-shaped being with a hammer on its hand saying "Tools", "LLM" in its head and "harness" in its body, with a thinking bubble saying "Scaffolding"](harness-llm-scaffolding.png)]]]]
+
+---
+
+# Example: How Codex manages the context 
+
+.middle[.center[![Codex ](https://images.ctfassets.net/kftzwdyauwt9/2CNhKAWCXaUoKJM9P2aJIV/9e5c05009e2f7500115f74e9747a3b4e/oai_Unrolling_the_Codex_agent_loop_Snapshot_1_desktop-dark.svg?w=1920&q=80)]]
+
+---
+
+# Harness choice matters
+
+- Different harnesses have different system prompts
+
+- Different harnesses have different tools by default
+
+---
+
+# LLM provider can modify/filter the context
+
+- Depending on the LLM provider:
+  - They can add instructions to the system prompt
+
+  - They can add tools that are run on their system
+  
+  - They can filter the input / output
+
+
+---
+
+# Misconception 5
+
+- Human interaction is not needed
+
+---
+
+# You are still responsible
+
+- You are responsible for what you agent does
+--
+
+- In Aalto, check [AI in Aalto](https://www.aalto.fi/en/services/ai-in-aalto)-page for best practice guidelines.
+
+---
+
+# Models "think" a lot
+
+- Models have been trained to do **chain-of-thought reasoning**
+
+- This allows models to solve complex problems by doing internal monologue in the context
+
+- Monitoring this thinking process is important if you want to see what the model is trying to do
+
+---
+
+# Models are sycophantic, but in a different way than you might think
+
+- Models try very hard to accomplish their tasks
+
+- During model training the models are given huge amount of complex tasks to solve using agentic workflows
+
+--
+
+- Given unclear instructions, models start to assume what the user wants and can start to do undesirable things
+
+---
+
+.middle[.center[
+
+# How to work with agents
+
+]]
+
+---
+
+# Harnesses follow AGENTS.md
+
+- Agent's system prompt can be specified in `AGENTS.md` 
+- Harness will read this document and will add it to the system prompt
+
+---
+
+# Creating your agent for your project
+
+1. Start a discussion with your agent and tell it to ask questions about your project with an end goal of writing an `AGENTS.md`
+--
+
+2. Iterate this discussion until `AGENTS.md` describes in detail what the agent should do
+--
+
+3. Start a new agent session and ask the agent to start implementing the plan
+--
+
+4. Check thinking to see if the agent is doing the right things
+--
+
+5. You can interject and give **guidance** to the model if it has misunderstood something
+--
+
+6. Update the plan based on implementation or discussion with the agent, so that next session has more context
+
+---
+
+# Creating reusable skills
+
+- Harnesses support `SKILLS.md` files, that can contain reusable instructions that the models should follow
+- If you find that you're always writing the same instructions, make it into a skill instead
+
+---
+
+# References
+
+- [Huggingface's term glossary](https://huggingface.co/blog/agent-glossary#policy)
+- [Unrolling the Codex agent loop](https://openai.com/index/unrolling-the-codex-agent-loop/)
+- [Model Context Protocol](https://modelcontextprotocol.io)
+- [Token-budget-aware LLM reasoning](https://aclanthology.org/2025.findings-acl.1274/)
+- [AGENTS.md](https://agents.md/)
+- [Agent Skills](https://agentskills.io)
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({
+        countIncrementalSlides: false
+      });
+    </script>
+  </body>
+</html>
